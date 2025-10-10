@@ -36,12 +36,7 @@ def cleanup_resources():
     # Clear loaded arrays
     _loaded_arrays.clear()
     
-    # Stop and clear pipes
-    for pipe in _pipes:
-        try:
-            pipe.stop()
-        except Exception as e:
-            logger.warning(f"Error stopping pipe: {e}")
+    # Clear pipe references (DALI manages lifecycle automatically)
     _pipes.clear()
     
     logger.info("Resource cleanup completed")
