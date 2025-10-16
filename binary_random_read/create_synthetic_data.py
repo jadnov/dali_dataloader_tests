@@ -12,7 +12,7 @@ Each shard folder:
 import argparse, json, os, uuid, random
 from pathlib import Path
 
-ROOT   = Path("/mnt/weka")          # change if needed
+ROOT   = Path("/mnt/test")          # change if needed
 SHARDS = ROOT / "shards_64k"        # parent directory
 
 RECORD_BYTES = 64 * 1024            # 65 536

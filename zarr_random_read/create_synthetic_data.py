@@ -25,7 +25,7 @@ import zarr
 
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="zarr")
 
-ROOT = Path("/mnt/weka")
+ROOT = Path("/mnt/test")
 SHARDS_ROOT = ROOT / "shards2" / "00000000"   # keep single episode ID
 DATASET_DIR = ROOT / "datasets2" / "synthetic"
 
@@ -137,9 +137,10 @@ def main():
         print(f" done ({size_mb:.1f} MB)")
 
     df = pd.DataFrame(records)
-    if pd.util._optional.import_optional_dependency("pyarrow", errors="ignore"):
+    try:
+        import pyarrow
         df.to_parquet(DATASET_DIR / "dataset.parquet", index=False)
-    else:
+    except ImportError:
         df.to_csv(DATASET_DIR / "dataset.parquet.csv", index=False)
 
     df.to_csv(DATASET_DIR / "inventory.txt", sep="\t", header=False, index=False)

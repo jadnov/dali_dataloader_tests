@@ -39,15 +39,22 @@ dali_dataloader_tests/
 cd numpy_random_read
 
 # Create 50 shards with synthetic data (default: 4000 steps, 2 cameras, 256x320 resolution)
-python create_synthetic_data.py --num-shards 50
+python3 create_synthetic_data.py --num-shards 50
 
-# Benchmark random reads from all shards
-python dali_random_read_numpy.py \
-  --shard "/mnt/weka/shards_numpy/*/image.npy" \
+# Basic benchmark with default settings
+python3 dali_random_read_numpy.py \
+  --shard "/mnt/test/shards_numpy/*/image.npy"
+
+# Full benchmark with all parameters
+python3 dali_random_read_numpy.py \
+  --shard "/mnt/test/shards_numpy/*/image.npy" \
   --batch 256 \
   --workers 16 \
   --shuffle \
-  --device-read-ahead 2
+  --device-read-ahead 2 \
+  --iterations 5 \
+  --drop-cache \
+  --verbose
 ```
 
 ### 2. **Binary (64KB) Random-Read Testing**
@@ -55,22 +62,31 @@ python dali_random_read_numpy.py \
 cd binary_random_read
 
 # Create 45 shards with 64KB fixed-size records (~500MB each)
-python create_synthetic_data.py --num-shards 45
+python3 create_synthetic_data.py --num-shards 45
+
+# Basic benchmark with default settings
+python3 dali_random_read_bin.py \
+  --shard "/mnt/test/shards_64k/*/data.bin"
 
 # Benchmark with O_DIRECT for true disk I/O performance
-python dali_random_read_bin.py \
-  --shard "/mnt/weka/shards_64k/*/data.bin" \
+python3 dali_random_read_bin.py \
+  --shard "/mnt/test/shards_64k/*/data.bin" \
   --batch 256 \
   --workers 16 \
   --shuffle \
-  --direct
+  --direct \
+  --device-read-ahead 2 \
+  --iterations 5 \
+  --drop-cache \
+  --verbose
 
-# Or test with OS page cache
-python dali_random_read_bin.py \
-  --shard "/mnt/weka/shards_64k/*/data.bin" \
+# Test with OS page cache (no O_DIRECT)
+python3 dali_random_read_bin.py \
+  --shard "/mnt/test/shards_64k/*/data.bin" \
   --batch 256 \
   --workers 16 \
-  --shuffle
+  --shuffle \
+  --iterations 3
 ```
 
 ### 3. **Zarr Compressed Testing**
@@ -78,15 +94,64 @@ python dali_random_read_bin.py \
 cd zarr_random_read
 
 # Create 50 shards with Zarr compressed format (~0.7 compression ratio)
-python create_synthetic_data.py --num-shards 50
+python3 create_synthetic_data.py --num-shards 50
 
-# Benchmark multi-shard random reads
-python dali_random_read_zarr.py \
-  --shard "/mnt/weka/shards2/00000000/*/steps.zarr.pack" \
+# Basic benchmark with default settings
+python3 dali_random_read_zarr.py \
+  --shard "/mnt/test/shards2/00000000/*/steps.pack"
+
+# Full benchmark with all parameters
+python3 dali_random_read_zarr.py \
+  --shard "/mnt/test/shards2/00000000/*/steps.pack" \
   --batch 256 \
   --workers 16 \
   --shuffle \
-  --device-read-ahead 2
+  --device-read-ahead 2 \
+  --iterations 5 \
+  --drop-cache \
+  --verbose
+```
+
+## Complete CLI Parameters Reference
+
+### NumPy Random-Read Script (`dali_random_read_numpy.py`)
+```bash
+python3 dali_random_read_numpy.py \
+  --shard "/path/to/shards/*/image.npy" \     # Required: Glob pattern for .npy files
+  --batch 256 \                               # Batch size per GPU (default: 256)
+  --workers 4 \                               # CPU worker threads (default: 4)
+  --shuffle \                                 # Shuffle global indices (optional)
+  --device-read-ahead 2 \                     # GPU prefetch queue depth (default: 2)
+  --iterations 1 \                            # Number of benchmark iterations (default: 1)
+  --drop-cache \                              # Drop page cache before benchmark (requires sudo)
+  --verbose                                   # Enable verbose logging (optional)
+```
+
+### Binary Random-Read Script (`dali_random_read_bin.py`)
+```bash
+python3 dali_random_read_bin.py \
+  --shard "/path/to/shards/*/data.bin" \      # Required: Glob pattern for .bin files
+  --batch 256 \                               # Batch size per GPU (default: 256)
+  --workers 4 \                               # CPU worker threads (default: 4)
+  --shuffle \                                 # Shuffle global indices (optional)
+  --direct \                                  # Enable O_DIRECT for bypassing OS cache (optional)
+  --device-read-ahead 2 \                     # GPU prefetch queue depth (default: 2)
+  --iterations 1 \                            # Number of benchmark iterations (default: 1)
+  --drop-cache \                              # Drop page cache before benchmark (requires sudo)
+  --verbose                                   # Enable verbose logging (optional)
+```
+
+### Zarr Random-Read Script (`dali_random_read_zarr.py`)
+```bash
+python3 dali_random_read_zarr.py \
+  --shard "/path/to/shards/*/steps.pack" \    # Required: Glob pattern for .pack files
+  --batch 256 \                               # Batch size per GPU (default: 256)
+  --workers 4 \                               # CPU worker threads (default: 4)
+  --shuffle \                                 # Shuffle global indices (optional)
+  --device-read-ahead 1 \                     # GPU prefetch queue depth (default: 1)
+  --iterations 1 \                            # Number of benchmark iterations (default: 1)
+  --drop-cache \                              # Drop page cache before benchmark (requires sudo)
+  --verbose                                   # Enable verbose logging (optional)
 ```
 
 ## Project Purpose
@@ -104,13 +169,27 @@ The project is particularly valuable for teams working with large-scale machine 
 
 All benchmark scripts support the following options:
 
+### Required Parameters
 - `--shard`: Glob pattern for shard files (e.g., `/mnt/weka/shards/*/data.bin`)
+
+### Performance Tuning Parameters
 - `--batch`: Batch size per GPU (default: 256)
 - `--workers`: Number of CPU worker threads (default: 4)
+- `--device-read-ahead`: GPU prefetch queue depth (default: 1 for Zarr, 2 for NumPy/Binary)
 - `--shuffle`: Shuffle global indices before distributing to GPUs
-- `--device-read-ahead`: GPU prefetch queue depth (default: 1, NumPy and Zarr only)
+
+### Benchmarking Parameters
+- `--iterations`: Number of benchmark iterations to run (default: 1)
+- `--drop-cache`: Drop page cache before benchmark (requires sudo privileges)
 - `--direct`: Enable O_DIRECT for bypassing OS cache (binary tests only)
+
+### Debugging Parameters
 - `--verbose` or `-v`: Enable verbose logging for debugging
+
+### Parameter-Specific Notes
+- **NumPy/Zarr scripts**: Support `--device-read-ahead` for GPU prefetch optimization
+- **Binary script**: Supports `--direct` flag for O_DIRECT I/O testing
+- **All scripts**: Support `--drop-cache` for measuring actual disk performance vs cached performance
 
 ## Performance Considerations
 
