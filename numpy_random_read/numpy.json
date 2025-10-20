@@ -1,0 +1,50 @@
+{
+  "benchmark": "numpy_random_read",
+  "config": {
+    "shard": "/mnt/test/shards_numpy/*/image.npy",
+    "batch": 256,
+    "workers": 32,
+    "shuffle": true,
+    "device_read_ahead": 2,
+    "iterations": 10,
+    "drop_cache": false
+  },
+  "metrics": {
+    "iteration_ms": {
+      "mean": 668.9,
+      "std": 28.87,
+      "min": 638.83,
+      "max": 750.03,
+      "median": 662.95,
+      "p95": 718.27,
+      "p99": 743.68
+    },
+    "per_sample_ms": {
+      "mean": 2.61,
+      "min": 2.5,
+      "max": 2.93
+    },
+    "throughput_samples_per_s": {
+      "mean": 382.72,
+      "peak": 400.73
+    },
+    "bandwidth": {
+      "data_per_iter_MiB": 120.03,
+      "data_per_iter_MB": 125.86,
+      "mean_MiB_s": 179.44,
+      "mean_MB_s": 188.16,
+      "min_MiB_s": 160.03,
+      "min_MB_s": 167.81,
+      "peak_MiB_s": 187.89,
+      "peak_MB_s": 197.01
+    },
+    "memory": {
+      "process_rss_initial_MiB": 544.15,
+      "process_rss_final_MiB": 2940.91,
+      "process_rss_peak_MiB": 2939.91,
+      "system_used_MiB": 4784.52,
+      "system_total_MiB": 201291.96,
+      "system_percent": 2.4
+    }
+  }
+}
