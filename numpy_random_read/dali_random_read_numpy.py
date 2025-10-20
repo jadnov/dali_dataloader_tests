@@ -239,6 +239,8 @@ def main():
         ap.add_argument("--drop-cache", action="store_true", 
                         help="Drop page cache before benchmark (requires sudo)")
         ap.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
+        ap.add_argument("--json-output", type=str, default=None,
+                        help="Path to write a JSON file with final results")
         args = ap.parse_args()
 
         # Set logging level based on verbosity
@@ -364,15 +366,101 @@ def main():
         # Calculate and display final statistics
         logger.info("")
         logger.info("="*70)
+
+        # Compute stats first (so JSON has values); guard empty timings
+        stats_available = len(iteration_times_ms) > 0
+        if stats_available:
+            times_array = np.array(iteration_times_ms)
+            mean_ms = np.mean(times_array)
+            std_ms = np.std(times_array)
+            min_ms = np.min(times_array)
+            max_ms = np.max(times_array)
+            median_ms = np.median(times_array)
+            # Pre-compute bandwidth metrics for reuse (logs and JSON)
+            mean_bw_mibs = (bytes_per_iter / (1024**2)) / (mean_ms / 1000)
+            min_bw_mibs = (bytes_per_iter / (1024**2)) / (max_ms / 1000)
+            max_bw_mibs = (bytes_per_iter / (1024**2)) / (min_ms / 1000)
+            mean_bw_mbs  = (bytes_per_iter / (1000**2)) / (mean_ms / 1000)
+            min_bw_mbs   = (bytes_per_iter / (1000**2)) / (max_ms / 1000)
+            max_bw_mbs   = (bytes_per_iter / (1000**2)) / (min_ms / 1000)
+        else:
+            logger.error("No iteration timings recorded; skipping stats computation")
+
         logger.info("FINAL STATISTICS")
         logger.info("="*70)
-        
-        times_array = np.array(iteration_times_ms)
-        mean_ms = np.mean(times_array)
-        std_ms = np.std(times_array)
-        min_ms = np.min(times_array)
-        max_ms = np.max(times_array)
-        median_ms = np.median(times_array)
+
+        # Optionally write JSON summary (after stats computed)
+        if args.json_output:
+            try:
+                import json
+                base = {
+                    "benchmark": "numpy_random_read",
+                    "config": {
+                        "shard": args.shard,
+                        "batch": args.batch,
+                        "workers": args.workers,
+                        "shuffle": args.shuffle,
+                        "device_read_ahead": args.device_read_ahead,
+                        "iterations": args.iterations,
+                        "drop_cache": args.drop_cache,
+                    },
+                }
+                # Take a memory snapshot for JSON to avoid referencing later variables
+                mem_final_json = get_memory_stats()
+                if stats_available:
+                    summary = {
+                        **base,
+                        "metrics": {
+                            "iteration_ms": {
+                                "mean": round(float(mean_ms), 2),
+                                "std": round(float(std_ms), 2),
+                                "min": round(float(min_ms), 2),
+                                "max": round(float(max_ms), 2),
+                                "median": round(float(median_ms), 2),
+                                **({"p95": round(float(np.percentile(times_array, 95)), 2),
+                                    "p99": round(float(np.percentile(times_array, 99)), 2)} if args.iterations > 1 else {}),
+                            },
+                            "per_sample_ms": {
+                                "mean": round(float(mean_ms/samples_per_iter), 2),
+                                "min": round(float(min_ms/samples_per_iter), 2),
+                                "max": round(float(max_ms/samples_per_iter), 2),
+                            },
+                            "throughput_samples_per_s": {
+                                "mean": round(float(samples_per_iter/(mean_ms/1000)), 2),
+                                "peak": round(float(samples_per_iter/(min_ms/1000)), 2),
+                            },
+                            "bandwidth": {
+                                "data_per_iter_MiB": round(float(bytes_per_iter / (1024**2)), 2),
+                                "data_per_iter_MB": round(float(bytes_per_iter / (1000**2)), 2),
+                                "mean_MiB_s": round(float(mean_bw_mibs), 2),
+                                "mean_MB_s": round(float(mean_bw_mbs), 2),
+                                "min_MiB_s": round(float(min_bw_mibs), 2),
+                                "min_MB_s": round(float(min_bw_mbs), 2),
+                                "peak_MiB_s": round(float(max_bw_mibs), 2),
+                                "peak_MB_s": round(float(max_bw_mbs), 2),
+                            },
+                            "memory": {
+                                **({
+                                    "process_rss_initial_MiB": round(float(mem_initial.get('process_rss_mb', 0)), 2)
+                                } if HAS_PSUTIL else {}),
+                                **({
+                                    "process_rss_final_MiB": round(float(mem_final_json.get('process_rss_mb', 0)), 2),
+                                    "process_rss_peak_MiB": round(float(peak_process_rss), 2),
+                                    "system_used_MiB": round(float(mem_final_json.get('system_used_mb', 0)), 2),
+                                    "system_total_MiB": round(float(mem_final_json.get('system_total_mb', 0)), 2),
+                                    "system_percent": round(float(mem_final_json.get('system_percent', 0)), 2),
+                                } if HAS_PSUTIL else {}),
+                            },
+                        },
+                    }
+                else:
+                    summary = {**base, "error": "no_iteration_timings_recorded"}
+                os.makedirs(os.path.dirname(args.json_output) or ".", exist_ok=True)
+                with open(args.json_output, "w") as f:
+                    json.dump(summary, f, indent=2)
+                logger.info(f"Wrote JSON results to {args.json_output}")
+            except Exception as e:
+                logger.error(f"Failed to write JSON results: {e}")
         
         logger.info(f"Configuration:")
         logger.info(f"  Batch size:    {args.batch}")
