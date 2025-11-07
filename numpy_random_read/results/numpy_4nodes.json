@@ -1,0 +1,232 @@
+{
+  "benchmark": "numpy_random_read",
+  "world_size": 4,
+  "config": {
+    "shard": "/mnt/data/shards_numpy/*/image.npy",
+    "batch": 256,
+    "workers": 32,
+    "shuffle": true,
+    "device_read_ahead": 2,
+    "iterations": 10,
+    "drop_cache": true
+  },
+  "ranks": [
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 0,
+      "world_size": 4,
+      "hostname": "worker-1",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2421.34,
+          "std": 925.95,
+          "min": 1203.67,
+          "max": 4058.49,
+          "median": 2231.11,
+          "p95": 3882.69,
+          "p99": 4023.33
+        },
+        "per_sample_ms": {
+          "mean": 1.18,
+          "min": 0.59,
+          "max": 1.98
+        },
+        "throughput_samples_per_s": {
+          "mean": 845.81,
+          "peak": 1701.47
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 396.57,
+          "mean_MB_s": 415.84,
+          "min_MiB_s": 236.6,
+          "min_MB_s": 248.09,
+          "peak_MiB_s": 797.76,
+          "peak_MB_s": 836.51
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.7,
+          "process_rss_final_MiB": 19178.11,
+          "process_rss_peak_MiB": 19178.11,
+          "system_used_MiB": 28321.55,
+          "system_total_MiB": 1612639.03,
+          "system_percent": 1.8
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 1,
+      "world_size": 4,
+      "hostname": "worker-2",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2509.69,
+          "std": 967.37,
+          "min": 1309.31,
+          "max": 4205.15,
+          "median": 2294.46,
+          "p95": 4044.3,
+          "p99": 4172.98
+        },
+        "per_sample_ms": {
+          "mean": 1.23,
+          "min": 0.64,
+          "max": 2.05
+        },
+        "throughput_samples_per_s": {
+          "mean": 816.04,
+          "peak": 1564.19
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 382.61,
+          "mean_MB_s": 401.2,
+          "min_MiB_s": 228.35,
+          "min_MB_s": 239.44,
+          "peak_MiB_s": 733.39,
+          "peak_MB_s": 769.02
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.25,
+          "process_rss_final_MiB": 19183.75,
+          "process_rss_peak_MiB": 19182.75,
+          "system_used_MiB": 26436.08,
+          "system_total_MiB": 1612639.05,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 2,
+      "world_size": 4,
+      "hostname": "worker-3",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2482.84,
+          "std": 871.61,
+          "min": 1360.88,
+          "max": 4139.68,
+          "median": 2291.55,
+          "p95": 3857.32,
+          "p99": 4083.21
+        },
+        "per_sample_ms": {
+          "mean": 1.21,
+          "min": 0.66,
+          "max": 2.02
+        },
+        "throughput_samples_per_s": {
+          "mean": 824.86,
+          "peak": 1504.91
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 386.75,
+          "mean_MB_s": 405.53,
+          "min_MiB_s": 231.96,
+          "min_MB_s": 243.23,
+          "peak_MiB_s": 705.6,
+          "peak_MB_s": 739.88
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1276.82,
+          "process_rss_final_MiB": 19178.88,
+          "process_rss_peak_MiB": 19177.88,
+          "system_used_MiB": 26515.83,
+          "system_total_MiB": 1612639.03,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 3,
+      "world_size": 4,
+      "hostname": "worker-4",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2471.64,
+          "std": 977.46,
+          "min": 1260.78,
+          "max": 4346.41,
+          "median": 2280.36,
+          "p95": 4078.53,
+          "p99": 4292.84
+        },
+        "per_sample_ms": {
+          "mean": 1.21,
+          "min": 0.62,
+          "max": 2.12
+        },
+        "throughput_samples_per_s": {
+          "mean": 828.6,
+          "peak": 1624.39
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 388.5,
+          "mean_MB_s": 407.37,
+          "min_MiB_s": 220.93,
+          "min_MB_s": 231.66,
+          "peak_MiB_s": 761.62,
+          "peak_MB_s": 798.62
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1276.69,
+          "process_rss_final_MiB": 19170.52,
+          "process_rss_peak_MiB": 19168.52,
+          "system_used_MiB": 26351.46,
+          "system_total_MiB": 1612639.04,
+          "system_percent": 1.6
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total_throughput_samples_per_s": 3315.31,
+    "total_bandwidth_MiB_s": 1554.43,
+    "mean_iteration_ms": 2471.3775
+  }
+}

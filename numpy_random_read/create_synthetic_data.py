@@ -14,7 +14,7 @@ from pathlib import Path
 import argparse, uuid
 import numpy as np
 
-ROOT = Path("/mnt/test")            # change if desired
+ROOT = Path("/mnt/data")            # change if desired
 SHARDS = ROOT / "shards_numpy"      # all shards live here
 
 

@@ -1,0 +1,444 @@
+{
+  "benchmark": "numpy_random_read",
+  "world_size": 8,
+  "config": {
+    "shard": "/mnt/data/shards_numpy/*/image.npy",
+    "batch": 256,
+    "workers": 32,
+    "shuffle": true,
+    "device_read_ahead": 2,
+    "iterations": 10,
+    "drop_cache": true
+  },
+  "ranks": [
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 0,
+      "world_size": 8,
+      "hostname": "worker-1",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2468.72,
+          "std": 960.08,
+          "min": 1231.46,
+          "max": 4300.17,
+          "median": 2194.47,
+          "p95": 4008.35,
+          "p99": 4241.8
+        },
+        "per_sample_ms": {
+          "mean": 1.21,
+          "min": 0.6,
+          "max": 2.1
+        },
+        "throughput_samples_per_s": {
+          "mean": 829.58,
+          "peak": 1663.07
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 388.96,
+          "mean_MB_s": 407.85,
+          "min_MiB_s": 223.3,
+          "min_MB_s": 234.15,
+          "peak_MiB_s": 779.75,
+          "peak_MB_s": 817.63
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.97,
+          "process_rss_final_MiB": 19173.92,
+          "process_rss_peak_MiB": 19171.92,
+          "system_used_MiB": 28246.81,
+          "system_total_MiB": 1612639.03,
+          "system_percent": 1.8
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 1,
+      "world_size": 8,
+      "hostname": "worker-2",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2438.61,
+          "std": 976.18,
+          "min": 1330.87,
+          "max": 4378.36,
+          "median": 2287.22,
+          "p95": 4037.07,
+          "p99": 4310.1
+        },
+        "per_sample_ms": {
+          "mean": 1.19,
+          "min": 0.65,
+          "max": 2.14
+        },
+        "throughput_samples_per_s": {
+          "mean": 839.82,
+          "peak": 1538.85
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 393.76,
+          "mean_MB_s": 412.89,
+          "min_MiB_s": 219.31,
+          "min_MB_s": 229.97,
+          "peak_MiB_s": 721.51,
+          "peak_MB_s": 756.56
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.66,
+          "process_rss_final_MiB": 19170.59,
+          "process_rss_peak_MiB": 19169.59,
+          "system_used_MiB": 26329.02,
+          "system_total_MiB": 1612639.05,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 2,
+      "world_size": 8,
+      "hostname": "worker-3",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2487.54,
+          "std": 1037.86,
+          "min": 1215.88,
+          "max": 4621.84,
+          "median": 2236.02,
+          "p95": 4202.51,
+          "p99": 4537.97
+        },
+        "per_sample_ms": {
+          "mean": 1.21,
+          "min": 0.59,
+          "max": 2.26
+        },
+        "throughput_samples_per_s": {
+          "mean": 823.3,
+          "peak": 1684.37
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 386.02,
+          "mean_MB_s": 404.77,
+          "min_MiB_s": 207.76,
+          "min_MB_s": 217.85,
+          "peak_MiB_s": 789.74,
+          "peak_MB_s": 828.11
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.77,
+          "process_rss_final_MiB": 19169.65,
+          "process_rss_peak_MiB": 19167.65,
+          "system_used_MiB": 26559.49,
+          "system_total_MiB": 1612639.03,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 3,
+      "world_size": 8,
+      "hostname": "worker-4",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2467.24,
+          "std": 1001.84,
+          "min": 1232.24,
+          "max": 4341.56,
+          "median": 2266.87,
+          "p95": 4115.27,
+          "p99": 4296.31
+        },
+        "per_sample_ms": {
+          "mean": 1.2,
+          "min": 0.6,
+          "max": 2.12
+        },
+        "throughput_samples_per_s": {
+          "mean": 830.08,
+          "peak": 1662.02
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 389.19,
+          "mean_MB_s": 408.1,
+          "min_MiB_s": 221.17,
+          "min_MB_s": 231.92,
+          "peak_MiB_s": 779.26,
+          "peak_MB_s": 817.11
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1278.81,
+          "process_rss_final_MiB": 19185.82,
+          "process_rss_peak_MiB": 19184.82,
+          "system_used_MiB": 26326.12,
+          "system_total_MiB": 1612639.04,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 4,
+      "world_size": 8,
+      "hostname": "worker-5",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2551.41,
+          "std": 1015.33,
+          "min": 1288.32,
+          "max": 4556.07,
+          "median": 2433.75,
+          "p95": 4261.23,
+          "p99": 4497.1
+        },
+        "per_sample_ms": {
+          "mean": 1.25,
+          "min": 0.63,
+          "max": 2.22
+        },
+        "throughput_samples_per_s": {
+          "mean": 802.69,
+          "peak": 1589.67
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 376.35,
+          "mean_MB_s": 394.64,
+          "min_MiB_s": 210.76,
+          "min_MB_s": 221.0,
+          "peak_MiB_s": 745.34,
+          "peak_MB_s": 781.55
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.48,
+          "process_rss_final_MiB": 19184.09,
+          "process_rss_peak_MiB": 19183.09,
+          "system_used_MiB": 28381.95,
+          "system_total_MiB": 1612639.06,
+          "system_percent": 1.8
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 5,
+      "world_size": 8,
+      "hostname": "worker-6",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2558.89,
+          "std": 1019.09,
+          "min": 1356.84,
+          "max": 4383.48,
+          "median": 2316.23,
+          "p95": 4229.29,
+          "p99": 4352.65
+        },
+        "per_sample_ms": {
+          "mean": 1.25,
+          "min": 0.66,
+          "max": 2.14
+        },
+        "throughput_samples_per_s": {
+          "mean": 800.35,
+          "peak": 1509.39
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 375.25,
+          "mean_MB_s": 393.48,
+          "min_MiB_s": 219.06,
+          "min_MB_s": 229.7,
+          "peak_MiB_s": 707.7,
+          "peak_MB_s": 742.07
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.88,
+          "process_rss_final_MiB": 19179.81,
+          "process_rss_peak_MiB": 19178.81,
+          "system_used_MiB": 26501.53,
+          "system_total_MiB": 1612639.07,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 6,
+      "world_size": 8,
+      "hostname": "worker-7",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2512.69,
+          "std": 1006.38,
+          "min": 1169.51,
+          "max": 4373.8,
+          "median": 2238.1,
+          "p95": 4126.9,
+          "p99": 4324.42
+        },
+        "per_sample_ms": {
+          "mean": 1.23,
+          "min": 0.57,
+          "max": 2.14
+        },
+        "throughput_samples_per_s": {
+          "mean": 815.06,
+          "peak": 1751.17
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 382.15,
+          "mean_MB_s": 400.72,
+          "min_MiB_s": 219.54,
+          "min_MB_s": 230.21,
+          "peak_MiB_s": 821.06,
+          "peak_MB_s": 860.94
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.7,
+          "process_rss_final_MiB": 19183.14,
+          "process_rss_peak_MiB": 19182.14,
+          "system_used_MiB": 28857.27,
+          "system_total_MiB": 1612639.07,
+          "system_percent": 1.8
+        }
+      }
+    },
+    {
+      "benchmark": "numpy_random_read",
+      "rank": 7,
+      "world_size": 8,
+      "hostname": "worker-0",
+      "config": {
+        "shard": "/mnt/data/shards_numpy/*/image.npy",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 2507.87,
+          "std": 1012.77,
+          "min": 1324.79,
+          "max": 4290.78,
+          "median": 2215.61,
+          "p95": 4177.12,
+          "p99": 4268.05
+        },
+        "per_sample_ms": {
+          "mean": 1.22,
+          "min": 0.65,
+          "max": 2.1
+        },
+        "throughput_samples_per_s": {
+          "mean": 816.63,
+          "peak": 1545.91
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 960.23,
+          "data_per_iter_MB": 1006.88,
+          "mean_MiB_s": 382.89,
+          "mean_MB_s": 401.49,
+          "min_MiB_s": 223.79,
+          "min_MB_s": 234.66,
+          "peak_MiB_s": 724.82,
+          "peak_MB_s": 760.03
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1278.12,
+          "process_rss_final_MiB": 19182.82,
+          "process_rss_peak_MiB": 19181.82,
+          "system_used_MiB": 28699.65,
+          "system_total_MiB": 1612639.09,
+          "system_percent": 1.8
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total_throughput_samples_per_s": 6557.51,
+    "total_bandwidth_MiB_s": 3074.5699999999997,
+    "mean_iteration_ms": 2499.12125
+  }
+}

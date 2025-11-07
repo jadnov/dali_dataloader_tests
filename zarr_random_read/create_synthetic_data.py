@@ -25,7 +25,7 @@ import zarr
 
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="zarr")
 
-ROOT = Path("/mnt/test")
+ROOT = Path("/mnt/data")
 SHARDS_ROOT = ROOT / "shards2" / "00000000"   # keep single episode ID
 DATASET_DIR = ROOT / "datasets2" / "synthetic"
 

@@ -13,6 +13,20 @@ import numpy as np
 import torch
 from nvidia.dali import fn, pipeline_def, types
 
+# Import MPI utilities
+sys.path.insert(0, str(Path(__file__).parent.parent))
+try:
+    from mpi_utils import init_mpi, is_master, gather_metrics, get_rank_hostname, barrier
+    print(f"DEBUG: Successfully imported mpi_utils", flush=True)
+except ImportError as e:
+    print(f"ERROR: Failed to import mpi_utils: {e}", flush=True)
+    # Provide fallback functions
+    def init_mpi(): return None, 0, 1
+    def is_master(rank): return rank == 0
+    def gather_metrics(data, comm, root=0): return [data]
+    def get_rank_hostname(): return "localhost"
+    def barrier(comm): pass
+
 try:
     import psutil
     HAS_PSUTIL = True
@@ -232,7 +246,24 @@ def pipe(eii):
 
 # ---------------------------------------------------------------------------
 def main():
+    # Initialize MPI first (before try block to ensure it's in scope)
+    comm, rank, world_size = None, 0, 1
+    hostname = "unknown"
+    
     try:
+        # Try to initialize MPI
+        try:
+            comm, rank, world_size = init_mpi()
+            hostname = get_rank_hostname()
+            print(f"DEBUG: MPI initialized - rank={rank}, world_size={world_size}, hostname={hostname}", flush=True)
+        except Exception as e:
+            print(f"ERROR: Failed to initialize MPI: {e}", flush=True)
+            import traceback
+            traceback.print_exc()
+            # Continue with single-process mode
+            comm, rank, world_size = None, 0, 1
+            hostname = "localhost"
+        
         ap = argparse.ArgumentParser()
         ap.add_argument("--shard", required=True,
             help='glob like "/mnt/weka/shards_64k/*/data.bin"')
@@ -254,7 +285,7 @@ def main():
         if args.verbose:
             logging.getLogger().setLevel(logging.DEBUG)
 
-        logger.info(f"Starting benchmark with args: {vars(args)}")
+        logger.info(f"[Rank {rank}/{world_size} @ {hostname}] Starting benchmark with args: {vars(args)}")
         
         if not HAS_PSUTIL:
             logger.warning("psutil not available, memory stats will be limited")
@@ -396,6 +427,9 @@ def main():
                 import json
                 base = {
                     "benchmark": "binary_random_read",
+                    "rank": rank,
+                    "world_size": world_size,
+                    "hostname": hostname,
                     "config": {
                         "shard": args.shard,
                         "batch": args.batch,
@@ -458,10 +492,61 @@ def main():
                     }
                 else:
                     summary = {**base, "error": "no_iteration_timings_recorded"}
+                
+                # Create output directory
                 os.makedirs(os.path.dirname(args.json_output) or ".", exist_ok=True)
-                with open(args.json_output, "w") as f:
-                    json.dump(summary, f, indent=2)
-                logger.info(f"Wrote JSON results to {args.json_output}")
+                
+                # Write per-rank JSON file
+                if world_size > 1:
+                    # Add rank suffix for multi-rank jobs
+                    json_path = Path(args.json_output)
+                    rank_json_output = json_path.parent / f"{json_path.stem}_rank{rank}{json_path.suffix}"
+                    with open(rank_json_output, "w") as f:
+                        json.dump(summary, f, indent=2)
+                    logger.info(f"Wrote rank {rank} JSON results to {rank_json_output}")
+                else:
+                    # Single rank: write to original path
+                    with open(args.json_output, "w") as f:
+                        json.dump(summary, f, indent=2)
+                    logger.info(f"Wrote JSON results to {args.json_output}")
+                
+                # Gather all results to rank 0 and write combined JSON
+                if world_size > 1:
+                    # Ensure all ranks have written their individual files before gathering
+                    barrier(comm)
+                    
+                    all_results = gather_metrics(summary, comm)
+                    
+                    if is_master(rank) and all_results is not None:
+                        # Write combined results
+                        combined = {
+                            "benchmark": "binary_random_read",
+                            "world_size": world_size,
+                            "config": base["config"],
+                            "ranks": all_results,
+                            "summary": {
+                                "total_throughput_samples_per_s": sum(
+                                    r.get("metrics", {}).get("throughput_samples_per_s", {}).get("mean", 0) 
+                                    for r in all_results if "metrics" in r
+                                ),
+                                "total_bandwidth_MiB_s": sum(
+                                    r.get("metrics", {}).get("bandwidth", {}).get("mean_MiB_s", 0) 
+                                    for r in all_results if "metrics" in r
+                                ),
+                                "mean_iteration_ms": np.mean([
+                                    r.get("metrics", {}).get("iteration_ms", {}).get("mean", 0) 
+                                    for r in all_results if "metrics" in r
+                                ]) if all_results and any("metrics" in r for r in all_results) else 0,
+                            }
+                        }
+                        
+                        with open(args.json_output, "w") as f:
+                            json.dump(combined, f, indent=2)
+                        logger.info(f"Wrote combined JSON results (all {world_size} ranks) to {args.json_output}")
+                    
+                    # Wait for rank 0 to finish writing before continuing
+                    barrier(comm)
+                
             except Exception as e:
                 logger.error(f"Failed to write JSON results: {e}")
         
@@ -537,14 +622,55 @@ def main():
         
         logger.info("="*70)
         
+        # Final barrier to ensure all ranks finish together
+        if world_size > 1:
+            logger.info(f"[Rank {rank}] Waiting for all ranks to complete...")
+            sys.stdout.flush()  # Force output
+            barrier(comm)
+            logger.info(f"[Rank {rank}] All ranks completed successfully")
+            sys.stdout.flush()
+        
     except KeyboardInterrupt:
-        logger.info("Benchmark interrupted by user")
+        logger.info(f"[Rank {rank if 'rank' in locals() else '?'}] Benchmark interrupted by user")
         sys.exit(1)
     except Exception as e:
-        logger.error(f"Benchmark failed: {e}")
+        logger.error(f"[Rank {rank if 'rank' in locals() else '?'}] Benchmark failed: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
     finally:
+        # Save rank info for cleanup logging
+        saved_rank = rank if 'rank' in locals() else '?'
+        saved_world_size = world_size if 'world_size' in locals() else 1
+        saved_comm = comm if 'comm' in locals() else None
+        
+        logger.info(f"[Rank {saved_rank}] Entering finally block...")
+        sys.stdout.flush()
+        
         cleanup_resources()
+        
+        # Final barrier after cleanup if running with MPI
+        if saved_world_size > 1 and saved_comm is not None:
+            logger.info(f"[Rank {saved_rank}] Final barrier before exit...")
+            sys.stdout.flush()
+            try:
+                barrier(saved_comm)
+                logger.info(f"[Rank {saved_rank}] Final barrier passed")
+            except Exception as e:
+                logger.warning(f"[Rank {saved_rank}] Final barrier failed: {e}")
+        
+        logger.info(f"[Rank {saved_rank}] Cleanup complete, exiting...")
+        sys.stdout.flush()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+        # Explicitly exit with success code
+        sys.exit(0)
+    except SystemExit:
+        raise  # Re-raise sys.exit() calls
+    except Exception as e:
+        print(f"Fatal error in main: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)

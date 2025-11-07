@@ -1,2 +1,8 @@
-195.242.13.48 slots=1
-89.169.111.249 slots=1
+worker-1 slots=1
+worker-2 slots=1
+worker-3 slots=1
+worker-4 slots=1
+worker-5 slots=1
+worker-6 slots=1
+worker-7 slots=1
+worker-0 slots=1

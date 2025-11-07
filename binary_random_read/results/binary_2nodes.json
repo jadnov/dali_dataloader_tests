@@ -1,0 +1,132 @@
+{
+  "benchmark": "binary_random_read",
+  "world_size": 2,
+  "config": {
+    "shard": "/mnt/data/shards_64k/*/data.bin",
+    "batch": 256,
+    "workers": 32,
+    "shuffle": true,
+    "direct": false,
+    "device_read_ahead": 2,
+    "iterations": 10,
+    "drop_cache": true,
+    "record_bytes": 65536
+  },
+  "ranks": [
+    {
+      "benchmark": "binary_random_read",
+      "rank": 0,
+      "world_size": 2,
+      "hostname": "worker-1",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1746.22,
+          "std": 48.19,
+          "min": 1693.92,
+          "max": 1857.71,
+          "median": 1730.09,
+          "p95": 1829.31,
+          "p99": 1852.03
+        },
+        "per_sample_ms": {
+          "mean": 0.85,
+          "min": 0.83,
+          "max": 0.91
+        },
+        "throughput_samples_per_s": {
+          "mean": 1172.82,
+          "peak": 1209.03
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 73.3,
+          "mean_MB_s": 76.86,
+          "min_MiB_s": 68.9,
+          "min_MB_s": 72.25,
+          "peak_MiB_s": 75.56,
+          "peak_MB_s": 79.23
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1278.01,
+          "process_rss_final_MiB": 2541.85,
+          "process_rss_peak_MiB": 2540.85,
+          "system_used_MiB": 25025.17,
+          "system_total_MiB": 1612639.03,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "binary_random_read",
+      "rank": 1,
+      "world_size": 2,
+      "hostname": "worker-2",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1759.87,
+          "std": 49.06,
+          "min": 1698.56,
+          "max": 1835.54,
+          "median": 1745.24,
+          "p95": 1834.93,
+          "p99": 1835.42
+        },
+        "per_sample_ms": {
+          "mean": 0.86,
+          "min": 0.83,
+          "max": 0.9
+        },
+        "throughput_samples_per_s": {
+          "mean": 1163.72,
+          "peak": 1205.73
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 72.73,
+          "mean_MB_s": 76.27,
+          "min_MiB_s": 69.73,
+          "min_MB_s": 73.12,
+          "peak_MiB_s": 75.36,
+          "peak_MB_s": 79.02
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.8,
+          "process_rss_final_MiB": 2540.32,
+          "process_rss_peak_MiB": 2539.28,
+          "system_used_MiB": 23257.59,
+          "system_total_MiB": 1612639.05,
+          "system_percent": 1.4
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total_throughput_samples_per_s": 2336.54,
+    "total_bandwidth_MiB_s": 146.03,
+    "mean_iteration_ms": 1753.045
+  }
+}
