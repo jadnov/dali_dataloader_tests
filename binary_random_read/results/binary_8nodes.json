@@ -1,0 +1,462 @@
+{
+  "benchmark": "binary_random_read",
+  "world_size": 8,
+  "config": {
+    "shard": "/mnt/data/shards_64k/*/data.bin",
+    "batch": 256,
+    "workers": 32,
+    "shuffle": true,
+    "direct": false,
+    "device_read_ahead": 2,
+    "iterations": 10,
+    "drop_cache": true,
+    "record_bytes": 65536
+  },
+  "ranks": [
+    {
+      "benchmark": "binary_random_read",
+      "rank": 0,
+      "world_size": 8,
+      "hostname": "worker-1",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1755.82,
+          "std": 37.41,
+          "min": 1679.67,
+          "max": 1796.09,
+          "median": 1768.15,
+          "p95": 1792.96,
+          "p99": 1795.46
+        },
+        "per_sample_ms": {
+          "mean": 0.86,
+          "min": 0.82,
+          "max": 0.88
+        },
+        "throughput_samples_per_s": {
+          "mean": 1166.41,
+          "peak": 1219.29
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 72.9,
+          "mean_MB_s": 76.44,
+          "min_MiB_s": 71.27,
+          "min_MB_s": 74.73,
+          "peak_MiB_s": 76.21,
+          "peak_MB_s": 79.91
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.13,
+          "process_rss_final_MiB": 2493.56,
+          "process_rss_peak_MiB": 2507.07,
+          "system_used_MiB": 25009.41,
+          "system_total_MiB": 1612639.03,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "binary_random_read",
+      "rank": 1,
+      "world_size": 8,
+      "hostname": "worker-2",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1760.47,
+          "std": 38.69,
+          "min": 1705.33,
+          "max": 1817.5,
+          "median": 1764.44,
+          "p95": 1814.04,
+          "p99": 1816.81
+        },
+        "per_sample_ms": {
+          "mean": 0.86,
+          "min": 0.83,
+          "max": 0.89
+        },
+        "throughput_samples_per_s": {
+          "mean": 1163.33,
+          "peak": 1200.94
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 72.71,
+          "mean_MB_s": 76.24,
+          "min_MiB_s": 70.43,
+          "min_MB_s": 73.85,
+          "peak_MiB_s": 75.06,
+          "peak_MB_s": 78.7
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.96,
+          "process_rss_final_MiB": 2475.55,
+          "process_rss_peak_MiB": 2490.68,
+          "system_used_MiB": 23187.0,
+          "system_total_MiB": 1612639.05,
+          "system_percent": 1.4
+        }
+      }
+    },
+    {
+      "benchmark": "binary_random_read",
+      "rank": 2,
+      "world_size": 8,
+      "hostname": "worker-3",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1753.59,
+          "std": 43.11,
+          "min": 1704.12,
+          "max": 1827.94,
+          "median": 1741.57,
+          "p95": 1823.82,
+          "p99": 1827.12
+        },
+        "per_sample_ms": {
+          "mean": 0.86,
+          "min": 0.83,
+          "max": 0.89
+        },
+        "throughput_samples_per_s": {
+          "mean": 1167.89,
+          "peak": 1201.8
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 72.99,
+          "mean_MB_s": 76.54,
+          "min_MiB_s": 70.02,
+          "min_MB_s": 73.43,
+          "peak_MiB_s": 75.11,
+          "peak_MB_s": 78.76
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.41,
+          "process_rss_final_MiB": 2525.97,
+          "process_rss_peak_MiB": 2524.91,
+          "system_used_MiB": 23170.98,
+          "system_total_MiB": 1612639.03,
+          "system_percent": 1.4
+        }
+      }
+    },
+    {
+      "benchmark": "binary_random_read",
+      "rank": 3,
+      "world_size": 8,
+      "hostname": "worker-4",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1769.57,
+          "std": 36.8,
+          "min": 1703.17,
+          "max": 1836.6,
+          "median": 1774.2,
+          "p95": 1822.06,
+          "p99": 1833.69
+        },
+        "per_sample_ms": {
+          "mean": 0.86,
+          "min": 0.83,
+          "max": 0.9
+        },
+        "throughput_samples_per_s": {
+          "mean": 1157.34,
+          "peak": 1202.46
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 72.33,
+          "mean_MB_s": 75.85,
+          "min_MiB_s": 69.69,
+          "min_MB_s": 73.08,
+          "peak_MiB_s": 75.15,
+          "peak_MB_s": 78.8
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.09,
+          "process_rss_final_MiB": 2523.37,
+          "process_rss_peak_MiB": 2522.36,
+          "system_used_MiB": 23158.07,
+          "system_total_MiB": 1612639.04,
+          "system_percent": 1.4
+        }
+      }
+    },
+    {
+      "benchmark": "binary_random_read",
+      "rank": 4,
+      "world_size": 8,
+      "hostname": "worker-5",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1760.26,
+          "std": 39.47,
+          "min": 1710.97,
+          "max": 1808.63,
+          "median": 1747.9,
+          "p95": 1808.48,
+          "p99": 1808.6
+        },
+        "per_sample_ms": {
+          "mean": 0.86,
+          "min": 0.84,
+          "max": 0.88
+        },
+        "throughput_samples_per_s": {
+          "mean": 1163.46,
+          "peak": 1196.98
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 72.72,
+          "mean_MB_s": 76.25,
+          "min_MiB_s": 70.77,
+          "min_MB_s": 74.21,
+          "peak_MiB_s": 74.81,
+          "peak_MB_s": 78.45
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1277.72,
+          "process_rss_final_MiB": 2527.49,
+          "process_rss_peak_MiB": 2527.49,
+          "system_used_MiB": 25162.97,
+          "system_total_MiB": 1612639.06,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "binary_random_read",
+      "rank": 5,
+      "world_size": 8,
+      "hostname": "worker-6",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1749.47,
+          "std": 45.38,
+          "min": 1688.32,
+          "max": 1828.31,
+          "median": 1730.9,
+          "p95": 1819.84,
+          "p99": 1826.61
+        },
+        "per_sample_ms": {
+          "mean": 0.85,
+          "min": 0.82,
+          "max": 0.89
+        },
+        "throughput_samples_per_s": {
+          "mean": 1170.64,
+          "peak": 1213.04
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 73.17,
+          "mean_MB_s": 76.72,
+          "min_MiB_s": 70.01,
+          "min_MB_s": 73.41,
+          "peak_MiB_s": 75.82,
+          "peak_MB_s": 79.5
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1278.03,
+          "process_rss_final_MiB": 2524.48,
+          "process_rss_peak_MiB": 2523.48,
+          "system_used_MiB": 23246.89,
+          "system_total_MiB": 1612639.07,
+          "system_percent": 1.4
+        }
+      }
+    },
+    {
+      "benchmark": "binary_random_read",
+      "rank": 6,
+      "world_size": 8,
+      "hostname": "worker-7",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1749.44,
+          "std": 34.63,
+          "min": 1699.01,
+          "max": 1806.79,
+          "median": 1744.78,
+          "p95": 1805.67,
+          "p99": 1806.57
+        },
+        "per_sample_ms": {
+          "mean": 0.85,
+          "min": 0.83,
+          "max": 0.88
+        },
+        "throughput_samples_per_s": {
+          "mean": 1170.66,
+          "peak": 1205.41
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 73.17,
+          "mean_MB_s": 76.72,
+          "min_MiB_s": 70.84,
+          "min_MB_s": 74.29,
+          "peak_MiB_s": 75.34,
+          "peak_MB_s": 79.0
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1278.29,
+          "process_rss_final_MiB": 2508.82,
+          "process_rss_peak_MiB": 2507.82,
+          "system_used_MiB": 25563.68,
+          "system_total_MiB": 1612639.07,
+          "system_percent": 1.6
+        }
+      }
+    },
+    {
+      "benchmark": "binary_random_read",
+      "rank": 7,
+      "world_size": 8,
+      "hostname": "worker-0",
+      "config": {
+        "shard": "/mnt/data/shards_64k/*/data.bin",
+        "batch": 256,
+        "workers": 32,
+        "shuffle": true,
+        "direct": false,
+        "device_read_ahead": 2,
+        "iterations": 10,
+        "drop_cache": true,
+        "record_bytes": 65536
+      },
+      "metrics": {
+        "iteration_ms": {
+          "mean": 1760.5,
+          "std": 32.06,
+          "min": 1714.84,
+          "max": 1809.94,
+          "median": 1763.93,
+          "p95": 1803.06,
+          "p99": 1808.57
+        },
+        "per_sample_ms": {
+          "mean": 0.86,
+          "min": 0.84,
+          "max": 0.88
+        },
+        "throughput_samples_per_s": {
+          "mean": 1163.3,
+          "peak": 1194.28
+        },
+        "bandwidth": {
+          "data_per_iter_MiB": 128.0,
+          "data_per_iter_MB": 134.22,
+          "mean_MiB_s": 72.71,
+          "mean_MB_s": 76.24,
+          "min_MiB_s": 70.72,
+          "min_MB_s": 74.16,
+          "peak_MiB_s": 74.64,
+          "peak_MB_s": 78.27
+        },
+        "memory": {
+          "process_rss_initial_MiB": 1276.93,
+          "process_rss_final_MiB": 2526.63,
+          "process_rss_peak_MiB": 2526.63,
+          "system_used_MiB": 25403.89,
+          "system_total_MiB": 1612639.09,
+          "system_percent": 1.6
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total_throughput_samples_per_s": 9323.03,
+    "total_bandwidth_MiB_s": 582.7,
+    "mean_iteration_ms": 1757.3899999999999
+  }
+}
