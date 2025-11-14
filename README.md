@@ -6,11 +6,22 @@ This project is a comprehensive benchmarking suite for testing NVIDIA DALI (Data
 
 ```
 dali_dataloader_tests/
-├── README.md                    # Main documentation
-├── requirements.txt             # Python dependencies
-├── binary_random_read/         # Fixed-size binary record tests (64KB)
-├── numpy_random_read/          # NumPy array random-read tests
-└── zarr_random_read/           # Zarr compressed array tests
+├── README.md                     # Main documentation
+├── requirements.txt              # Python dependencies
+├── hosts.txt                     # Sample MPI hostfile
+├── mpi_utils.py                  # Shared MPI helpers (init/gather/logging)
+├── cluster_stats.py              # Cluster-level aggregation helpers
+├── binary_random_read/
+│   ├── create_synthetic_data.py
+│   ├── dali_random_read_bin.py
+│   └── results/                  # Saved JSON benchmarks (samples inside)
+├── numpy_random_read/
+│   ├── create_synthetic_data.py
+│   ├── dali_random_read_numpy.py
+│   └── results/
+└── zarr_random_read/
+    ├── create_synthetic_data.py
+    └── dali_random_read_zarr.py
 ```
 
 ## Key Technical Features
@@ -31,6 +42,11 @@ dali_dataloader_tests/
 - **Large datasets**: 50+ shards, 500MB+ each (~25GB+ total)
 - **Mixed data types**: Images (uint8), actions (float32), and state data (float32)
 - **Compression**: Tests real-world storage efficiency trade-offs
+
+### 4. **Distributed & Automated Reporting**
+- **Out-of-the-box MPI support**: All benchmark scripts auto-detect `mpi4py` via `mpi_utils.py` and gracefully fall back to single-node mode.
+- **Per-rank + aggregated JSON metrics**: Use `--json-output` to capture structured stats, including bandwidth, latency, and memory footprints.
+- **Cluster-level post-processing**: `cluster_stats.py` can turn gathered rank metrics into human-readable summaries and JSON exports for dashboards.
 
 ## Usage Examples
 
@@ -111,6 +127,63 @@ python3 dali_random_read_zarr.py \
   --drop-cache \
   --verbose
 ```
+
+## Distributed Execution With MPI
+
+- All benchmark scripts initialize MPI through `mpi_utils.init_mpi()`. When launched via `mpirun`/`horovodrun`, every rank prints contextual logging (`rank`, `hostname`, GPU count) and syncs through `barrier()` calls.
+- Update `hosts.txt` (or provide your own hostfile) to match the Nebius/HPC fleet you want to test. Example entries follow OpenMPI format: `worker-0 slots=1`.
+- Sample multi-node launch (8 ranks, two nodes, binary benchmark with metrics collection):
+
+```bash
+mpirun -np 8 --hostfile hosts.txt \
+  python3 binary_random_read/dali_random_read_bin.py \
+  --shard "/mnt/weka/shards_64k/*/data.bin" \
+  --batch 512 \
+  --workers 32 \
+  --shuffle \
+  --json-output binary_random_read/results/weka_run.json
+```
+
+What happens automatically:
+- Each rank writes `wekal_run_rank{N}.json` with full iteration stats, throughput, bandwidth, and memory usage.
+- Rank 0 gathers all summaries through `mpi_utils.gather_metrics()` and emits a combined `weka_run.json` that includes overall throughput and bandwidth totals.
+- Synchronization barriers ensure every rank finishes gracefully, making it safe to launch long jobs on Nebius-managed clusters.
+
+## Structured Metrics & Reporting
+
+The JSON payload emitted by `--json-output` is deliberately verbose so it can be fed into Grafana, DataDog, or the helper utilities in `cluster_stats.py`. Typical directory layout after a distributed run:
+
+```
+binary_random_read/results/
+├── weka_run_rank0.json
+├── weka_run_rank1.json
+├── ...
+└── weka_run.json        # Combined summary written by rank 0
+```
+
+### Using `cluster_stats.py`
+
+`cluster_stats.py` exposes three main helpers:
+- `aggregate_metrics(all_node_metrics, mpi_library)` → computes cluster-wide throughput, bandwidth, load-balance, and latency figures.
+- `format_cluster_report(cluster_metrics, config)` → pretty-prints a textual report (great for CI logs or Slack).
+- `write_cluster_json(cluster_metrics, config, output_path, benchmark_name)` and `compare_cluster_runs(json_files)` → persist results or compare multiple experiments.
+
+You can import these utilities into your own orchestration scripts once you have per-rank metric dictionaries (for example, data you collected via `mpi_utils.gather_metrics`). Minimal usage:
+
+```bash
+python - <<'PY'
+from cluster_stats import aggregate_metrics, format_cluster_report, write_cluster_json
+from mpi_utils import gather_metrics  # when running inside MPI context
+
+# all_node_metrics needs per-rank dictionaries (see NodeMetrics fields in cluster_stats.py)
+cluster_metrics = aggregate_metrics(all_node_metrics, mpi_library="OpenMPI 4.1.5")
+print(format_cluster_report(cluster_metrics, config))
+write_cluster_json(cluster_metrics, config, "binary_random_read/results/cluster_summary.json",
+                   benchmark_name="binary_random_read")
+PY
+```
+
+If you only need quick historical context, sample JSON outputs for 2/4/8 node runs live under each `*/results/` directory.
 
 ## Complete CLI Parameters Reference
 
@@ -207,3 +280,5 @@ Ensure you have:
 - CUDA 12.0+ installed
 - Compatible NVIDIA GPU(s)
 - Sufficient storage space for test data (~25GB+ per full test suite)
+- `mpi4py>=3.1` for distributed runs (optional but recommended)
+- `psutil` for enhanced memory telemetry (optional; already listed in `requirements.txt`)
